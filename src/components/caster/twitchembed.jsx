@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Moveable from 'react-moveable'
 import { useStore } from 'react-hookstore'
 
 import { POSITION_TWITCH_EMBED } from '../../actions/ui'
+import { SET_TWITCH } from '../../actions/players'
 import { twitchParents } from '../../configs/gen'
 
 const translateStyle = (translate) => `translate(${translate[0]}px, ${translate[1]}px)`
@@ -20,8 +21,8 @@ export function getTwitchEmbedUrl(channel, chat = false) {
 }
 
 export function TwitchEmbed(props) {
-    const [player, setPlayer] = useState(null)
     const [ui, uiDispatch] = useStore('ui')
+    const [{ twitch: player }, dispatchPlayers] = useStore('players')
 
     const moveableTarget = useRef()
     const eventSink = useRef()
@@ -37,11 +38,11 @@ export function TwitchEmbed(props) {
                 width: '100%',
                 height: '100%',
             }
-            let player = new window.Twitch.Player('twitch-player-div', options)
+            const new_player = new window.Twitch.Player('twitch-player-div', options)
 
-            setPlayer(player)
+            dispatchPlayers({ type: SET_TWITCH, player: new_player })
         }
-    }, [config.twitch_channel, setPlayer, player])
+    }, [config.twitch_channel, dispatchPlayers, player])
 
     useEffect(() => {
         setTimeout(() => {
@@ -102,7 +103,6 @@ export function TwitchEmbed(props) {
                     target.style.transform = translateStyle(beforeTranslate)
                 }}
                 onResizeEnd={({ lastEvent }) => {
-                    console.log(lastEvent)
                     if (lastEvent) {
                         uiDispatch({
                             type: POSITION_TWITCH_EMBED,

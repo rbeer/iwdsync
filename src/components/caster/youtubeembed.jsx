@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useLocalStorage } from '../../helper/hooks'
+import { useStore } from 'react-hookstore'
+
 import api from '../../api/api'
+import { SET_YOUTUBE } from '../../actions/players'
 
 export function YoutubeEmbed(props) {
-    const [player, setPlayer] = useState(null)
+    const [{ youtube: player }, dispatchPlayers] = useStore('players')
     const [youtubeUrl, setYoutubeUrl] = useState('')
-    const [timingData, setTimingData] = useState({})
-    const [offset, setOffset] = useLocalStorage('timing_offset', -9)
-    const [lastTimingUpdate, setLastTimingUpdate] = useLocalStorage('last_timing_update', null)
     const { caster, myCaster, youtubeLiveUrl, csrf } = props
     const youtubeId = youtubeLiveUrl ? youtubeLiveUrl.split('?v=')[1] : undefined
 
@@ -17,84 +16,25 @@ export function YoutubeEmbed(props) {
         })
     }
 
-    const updateSyncTime = useCallback(
-        (youtubeTime) => {
-            // const youtube_time = player.playerInfo.currentTime
-            const d = new Date()
-            const irlTime = d.getTime() / 1000
-            return api.caster.update(
-                {
-                    irl_time: irlTime,
-                    youtube_time: youtubeTime,
-                },
-                csrf,
-            )
-        },
-        [csrf],
-    )
-
-    const updateSyncIfCaster = useCallback(
-        (event) => {
-            if (caster === myCaster.url_path) {
-                updateSyncTime(event.target.playerInfo.currentTime)
-            }
-        },
-        [caster, myCaster.url_path, updateSyncTime],
-    )
-
     const createPlayer = useCallback(() => {
         if (youtubeId) {
-            let new_player = new window.YT.Player('ytplayer', {
+            const new_player = new window.YT.Player('ytplayer', {
                 videoId: youtubeId,
                 width: '100%',
                 height: '100%',
                 events: {
-                    onStateChange: updateSyncIfCaster,
                     onReady: (event) => {
                         event.target.mute()
                         // event.target.playVideo()
                     },
                 },
             })
-            setPlayer(new_player)
-        }
-    }, [youtubeId, updateSyncIfCaster])
-
-    const moveToSyncTime = useCallback(
-        (casterIrlTime, casterYoutubeTime) => {
-            if (player !== null && player.seekTo) {
-                const myTime = new Date().getTime() / 1000
-                const timeDelta = myTime - casterIrlTime
-                const syncedTime = casterYoutubeTime + timeDelta + parseFloat(offset)
-                player.seekTo(syncedTime, true)
-            }
-        },
-        [player, offset],
-    )
-
-    const syncToCaster = () => {
-        const lastUpdate = lastTimingUpdate || 1
-        let now = new Date()
-        now = now.getTime() / 1000
-        const delta = Math.abs(lastUpdate - now)
-        if (delta > 5) {
-            api.caster.get({ url_path: caster }).then((response) => {
-                setTimingData(response.data.data)
-                setLastTimingUpdate(now)
+            dispatchPlayers({
+                type: SET_YOUTUBE,
+                player: new_player,
             })
-        } else {
-            let tempTiming = { ...timingData }
-            tempTiming.caster_youtube_time += 0.001
-            setTimingData(tempTiming)
         }
-    }
-
-    // move to sync time on timing_data change
-    useEffect(() => {
-        const casterIrlTime = timingData.irl_time
-        const casterYoutubeTime = timingData.youtube_time
-        moveToSyncTime(casterIrlTime, casterYoutubeTime)
-    }, [timingData, moveToSyncTime])
+    }, [youtubeId, dispatchPlayers])
 
     // set player on load
     useEffect(() => {
@@ -132,18 +72,12 @@ export function YoutubeEmbed(props) {
                     <>
                         <div style={{ display: 'inline-block', marginRight: 8 }}>offset</div>
                         <input
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    syncToCaster()
-                                }
-                            }}
+                            onKeyDown={(event) => {}}
                             style={{ width: 100 }}
                             type="number"
                             step="0.1"
-                            value={offset}
-                            onChange={(event) => setOffset(event.target.value)}
                         />
-                        <button onClick={syncToCaster}>sync to caster</button>
+                        <button>sync to caster</button>
                     </>
                 )}
             </div>

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { createStore, useStore } from 'react-hookstore'
 
 import api from '../../api/api'
-import { initialState, reducer } from '../../reducers/ui'
+import * as uiStoreParams from '../../reducers/ui'
+import * as playersStoreParams from '../../reducers/players'
 
 import Controls from './Controls'
 import { TwitchChatEmbed } from './twitchchatembed'
@@ -12,10 +13,12 @@ import { TwitchEmbed } from './twitchembed'
 import Footer from '../general/Footer'
 
 const savedState = JSON.parse(window.localStorage.getItem('ui')) || {}
-const combinedState = { ...initialState, ...savedState }
-createStore('ui', combinedState, reducer).subscribe((state) => {
+const combinedState = { ...uiStoreParams.initialState, ...savedState }
+createStore('ui', combinedState, uiStoreParams.reducer).subscribe((state) => {
     window.localStorage.setItem('ui', JSON.stringify(state))
 })
+
+createStore('players', playersStoreParams.initialState, playersStoreParams.reducer)
 
 export function Caster(props) {
     const [csrf, setCsrf] = useState('')
