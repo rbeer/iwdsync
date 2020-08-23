@@ -20,13 +20,14 @@ createStore('ui', combinedState, uiStoreParams.reducer).subscribe((state) => {
 
 createStore('players', playersStoreParams.initialState, playersStoreParams.reducer)
 
-export function Caster(props) {
+export function Caster({ match }) {
     const [csrf, setCsrf] = useState('')
     const [casterData, setCasterData] = useState({})
     const [myCaster, setMyCaster] = useState({})
     const [{ chats }] = useStore('ui')
 
-    let caster = props.match.params.caster
+    const mode = match.params.mode
+    const caster = match.params.caster
 
     // get csrf
     useEffect(() => {
@@ -60,13 +61,14 @@ export function Caster(props) {
                         youtubeLiveUrl={casterData.youtube_url}
                         myCaster={myCaster}
                         csrf={csrf}
+                        mode={mode}
                     />
                 </div>
                 <div className="chat" open={chats.caster}>
                     <TwitchChatEmbed channel={casterData.twitch_channel} />
                 </div>
             </div>
-            {casterData.twitch_channel && <TwitchEmbed config={casterData} />}
+            {casterData.twitch_channel && mode === 'viewer' && <TwitchEmbed config={casterData} />}
             <Footer />
         </div>
     )

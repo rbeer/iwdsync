@@ -5,18 +5,17 @@ import useWebSocket from 'react-use-websocket'
 import api from '../../api/api'
 import { SET_YOUTUBE } from '../../actions/players'
 
-export function YoutubeEmbed(props) {
-    const { caster, myCaster, youtubeLiveUrl, csrf } = props
+export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf }) {
     const isCaster = myCaster.url_path === caster
     const wsUrl = `ws://localhost:8000/ws/${isCaster ? 'caster' : 'viewer'}/iwd`
 
     const [{ youtube: player }, dispatchPlayers] = useStore('players')
     const [youtubeUrl, setYoutubeUrl] = useState('')
-    const { sendJsonMessage } = useWebSocket(wsUrl)
+    const { sendJsonMessage, lastJsonMessage } = useWebSocket(wsUrl)
     const youtubeId = youtubeLiveUrl ? youtubeLiveUrl.split('?v=')[1] : undefined
 
     const updateYoutubeUrl = () => {
-        api.caster.update({ youtube_url: youtubeUrl }, props.csrf).then(() => {
+        api.caster.update({ youtube_url: youtubeUrl }, csrf).then(() => {
             // why are you doing a full page refresh here?
             window.location.reload()
         })
@@ -74,9 +73,14 @@ export function YoutubeEmbed(props) {
     }, [createPlayer])
 
     useEffect(() => {
-        if (!isCaster) return
-        window.heartbeatInterval = window.setInterval(sendHeartbeat, 1000)
+        if (isCaster) {
+            window.heartbeatInterval = window.setInterval(sendHeartbeat, 1000)
+        }
     }, [isCaster, sendHeartbeat])
+
+    useEffect(() => {
+        console.log(lastJsonMessage)
+    }, [lastJsonMessage])
 
     return (
         <>

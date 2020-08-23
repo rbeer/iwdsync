@@ -14,8 +14,8 @@ function App() {
     return (
         <Router>
             <Switch>
-                <Route path="/" exact component={() => <Redirect to="/caster/iwd" />} />
-                <Route path="/caster/:caster" component={Caster} />
+                <Route exact path="/" component={() => <Redirect to="/viewer/iwd" />} />
+                <Route exact path="/:mode(caster|viewer)/:caster" component={Caster} />
             </Switch>
         </Router>
     )
