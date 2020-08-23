@@ -1,17 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useStore } from 'react-hookstore'
+import useWebSocket from 'react-use-websocket'
 
 import api from '../../api/api'
 import { SET_YOUTUBE } from '../../actions/players'
 
 export function YoutubeEmbed(props) {
-    const [{ youtube: player }, dispatchPlayers] = useStore('players')
-    const [youtubeUrl, setYoutubeUrl] = useState('')
     const { caster, myCaster, youtubeLiveUrl, csrf } = props
+    const isCaster = myCaster.url_path === caster
+    const wsUrl = `ws://localhost:8000/ws/${isCaster ? 'caster' : 'viewer'}/iwd`
+
+    const [, dispatchPlayers] = useStore('players')
+    const [youtubeUrl, setYoutubeUrl] = useState('')
+    const { sendJsonMessage } = useWebSocket(wsUrl)
     const youtubeId = youtubeLiveUrl ? youtubeLiveUrl.split('?v=')[1] : undefined
 
     const updateYoutubeUrl = () => {
         api.caster.update({ youtube_url: youtubeUrl }, props.csrf).then(() => {
+            // why are you doing a full page refresh here?
             window.location.reload()
         })
     }
@@ -27,6 +33,21 @@ export function YoutubeEmbed(props) {
                         event.target.mute()
                         // event.target.playVideo()
                     },
+                    onStateChange: (event) => {
+                        if (!isCaster) return
+
+                        const playerState = window.YT.PlayerState
+                        switch (event.data) {
+                            case playerState.PAUSED:
+                                sendJsonMessage({ type: 'CONTROL', action: 'PAUSE' })
+                                break
+                            case playerState.PLAYING:
+                                sendJsonMessage({ type: 'CONTROL', action: 'PLAY' })
+                                break
+                            default:
+                                break
+                        }
+                    },
                 },
             })
             dispatchPlayers({
@@ -34,7 +55,7 @@ export function YoutubeEmbed(props) {
                 player: new_player,
             })
         }
-    }, [youtubeId, dispatchPlayers])
+    }, [youtubeId, dispatchPlayers, sendJsonMessage, isCaster])
 
     // set player on load
     useEffect(() => {
@@ -45,7 +66,7 @@ export function YoutubeEmbed(props) {
         <>
             <div id="ytplayer"></div>
             <div>
-                {myCaster.url_path === caster && (
+                {isCaster && (
                     <>
                         <div>
                             <input
@@ -68,7 +89,7 @@ export function YoutubeEmbed(props) {
                         {/* </button> */}
                     </>
                 )}
-                {myCaster.url_path !== caster && (
+                {!isCaster && (
                     <>
                         <div style={{ display: 'inline-block', marginRight: 8 }}>offset</div>
                         <input
