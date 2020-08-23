@@ -10,7 +10,7 @@ export function YoutubeEmbed(props) {
     const isCaster = myCaster.url_path === caster
     const wsUrl = `ws://localhost:8000/ws/${isCaster ? 'caster' : 'viewer'}/iwd`
 
-    const [, dispatchPlayers] = useStore('players')
+    const [{ youtube: player }, dispatchPlayers] = useStore('players')
     const [youtubeUrl, setYoutubeUrl] = useState('')
     const { sendJsonMessage } = useWebSocket(wsUrl)
     const youtubeId = youtubeLiveUrl ? youtubeLiveUrl.split('?v=')[1] : undefined
@@ -57,10 +57,26 @@ export function YoutubeEmbed(props) {
         }
     }, [youtubeId, dispatchPlayers, sendJsonMessage, isCaster])
 
+    const sendHeartbeat = useCallback(() => {
+        if (player?.getCurrentTime) {
+            if (player.getPlayerState() === window.YT.PlayerState.PLAYING) {
+                sendJsonMessage({
+                    type: 'HEARTBEAT',
+                    youtube_time: player.getCurrentTime(),
+                })
+            }
+        }
+    }, [player, sendJsonMessage])
+
     // set player on load
     useEffect(() => {
         window.YT.ready(createPlayer)
     }, [createPlayer])
+
+    useEffect(() => {
+        if (!isCaster) return
+        window.heartbeatInterval = window.setInterval(sendHeartbeat, 1000)
+    }, [isCaster, sendHeartbeat])
 
     return (
         <>
