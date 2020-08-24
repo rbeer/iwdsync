@@ -10,3 +10,5 @@ export const caster_data = {
 
 export const twitchParents = process.env.REACT_APP_TWITCH_PARENTS.split(',')
 export const apiBase = process.env.REACT_APP_API_BASE
+export const wsBase = process.env.REACT_APP_WS_BASE
+console.log(wsBase)

@@ -3,11 +3,12 @@ import { useStore } from 'react-hookstore'
 import useWebSocket from 'react-use-websocket'
 
 import api from '../../api/api'
+import { wsBase } from '../../configs/gen'
 import { SET_YOUTUBE } from '../../actions/players'
 
 export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf, mode }) {
     const isCaster = mode === 'caster' && myCaster.url_path === caster
-    const wsUrl = `ws://localhost:8000/ws/${isCaster ? 'caster' : 'viewer'}/iwd`
+    const wsUrl = `${wsBase}/ws/${isCaster ? 'caster' : 'viewer'}/${caster}`
 
     const [{ youtube: player }, dispatchPlayers] = useStore('players')
     const [isPlaying, setPlaying] = useState(false)
@@ -82,6 +83,7 @@ export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf, mode }) {
         return () => window.clearInterval(window.heartbeatInterval)
     }, [isCaster, isPlaying, sendHeartbeat])
 
+    // act on ws messages to viewer
     useEffect(() => {
         if (isCaster || !player?.playerInfo?.currentTime) return
         switch (lastJsonMessage?.type) {
