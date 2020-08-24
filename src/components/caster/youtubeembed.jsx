@@ -5,11 +5,12 @@ import useWebSocket from 'react-use-websocket'
 import api from '../../api/api'
 import { SET_YOUTUBE } from '../../actions/players'
 
-export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf }) {
-    const isCaster = myCaster.url_path === caster
+export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf, mode }) {
+    const isCaster = mode === 'caster' && myCaster.url_path === caster
     const wsUrl = `ws://localhost:8000/ws/${isCaster ? 'caster' : 'viewer'}/iwd`
 
     const [{ youtube: player }, dispatchPlayers] = useStore('players')
+    const [isPlaying, setPlaying] = useState(false)
     const [youtubeUrl, setYoutubeUrl] = useState('')
     const { sendJsonMessage, lastJsonMessage } = useWebSocket(wsUrl)
     const youtubeId = youtubeLiveUrl ? youtubeLiveUrl.split('?v=')[1] : undefined
@@ -38,9 +39,11 @@ export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf }) {
                         const playerState = window.YT.PlayerState
                         switch (event.data) {
                             case playerState.PAUSED:
+                                setPlaying(false)
                                 sendJsonMessage({ type: 'CONTROL', action: 'PAUSE' })
                                 break
                             case playerState.PLAYING:
+                                setPlaying(true)
                                 sendJsonMessage({ type: 'CONTROL', action: 'PLAY' })
                                 break
                             default:
@@ -73,14 +76,41 @@ export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf }) {
     }, [createPlayer])
 
     useEffect(() => {
-        if (isCaster) {
+        if (isCaster && isPlaying) {
             window.heartbeatInterval = window.setInterval(sendHeartbeat, 1000)
         }
-    }, [isCaster, sendHeartbeat])
+        return () => window.clearInterval(window.heartbeatInterval)
+    }, [isCaster, isPlaying, sendHeartbeat])
 
     useEffect(() => {
-        console.log(lastJsonMessage)
-    }, [lastJsonMessage])
+        if (isCaster || !player?.playerInfo?.currentTime) return
+        switch (lastJsonMessage?.type) {
+            case 'CONTROL':
+                const action = lastJsonMessage.action
+                if (action === 'PLAY') {
+                    console.info(`[YoutubeEmbed|CONTROL] Playing`)
+                    player.playVideo()
+                    setPlaying(true)
+                    break
+                }
+                if (action === 'PAUSE') {
+                    console.info(`[YoutubeEmbed|CONTROL] Pausing`)
+                    player.pauseVideo()
+                    setPlaying(false)
+                    break
+                }
+                break
+            case 'HEARTBEAT':
+                const delta = lastJsonMessage.youtube_time - player.getCurrentTime()
+                if (isPlaying && Math.abs(delta) >= 2) {
+                    console.info(`[YoutubeEmbed|HEARTBEAT] Delay > 2; synchronising...`)
+                    player.seekTo(lastJsonMessage.youtube_time)
+                }
+                break
+            default:
+                break
+        }
+    }, [isCaster, isPlaying, player, lastJsonMessage])
 
     return (
         <>
