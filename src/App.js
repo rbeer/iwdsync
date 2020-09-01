@@ -7,7 +7,7 @@ import {
     // Link
 } from 'react-router-dom'
 
-import { Caster } from './components/caster/caster'
+import { Caster } from './components/caster'
 import './App.css'
 
 function App() {
