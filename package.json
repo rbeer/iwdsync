@@ -15,7 +15,7 @@
         "react-inlinesvg": "^2.0.1",
         "react-moveable": "^0.21.6",
         "react-router-dom": "^5.2.0",
-        "react-scripts": "3.4.1",
+        "react-scripts": "^3.4.3",
         "react-use-websocket": "^2.1.1",
         "serve": "^11.3.2"
     },
