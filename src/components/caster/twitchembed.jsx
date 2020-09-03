@@ -5,6 +5,7 @@ import { useStore } from 'react-hookstore'
 import { POSITION_TWITCH_EMBED } from '../../actions/ui'
 import { SET_TWITCH } from '../../actions/players'
 import { twitchParents } from '../../configs/gen'
+import useContentBounds from '../../helper/useContentBounds'
 
 const translateStyle = (translate) => `translate(${translate[0]}px, ${translate[1]}px)`
 
@@ -23,6 +24,7 @@ export function getTwitchEmbedUrl(channel, chat = false) {
 export function TwitchEmbed(props) {
     const [ui, uiDispatch] = useStore('ui')
     const [{ twitch: player }, dispatchPlayers] = useStore('players')
+    const contentBounds = useContentBounds()
 
     const moveableTarget = useRef()
     const eventSink = useRef()
@@ -66,8 +68,10 @@ export function TwitchEmbed(props) {
             <Moveable
                 target={moveableTarget.current}
                 zoom={1}
-                origin={false}
+                origin={true}
                 renderDirections={[]}
+                snappable={true}
+                bounds={contentBounds}
                 padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
                 draggable={true}
                 dragArea={true}
