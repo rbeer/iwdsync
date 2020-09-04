@@ -8,8 +8,7 @@ import * as playersStoreParams from '../../reducers/players'
 import Controls from './Controls'
 import { TwitchChatEmbed } from './twitchchatembed'
 import { YoutubeEmbed } from './youtubeembed'
-import { TwitchEmbed } from './twitchembed'
-// import { Instructions } from './instructions'
+import TwitchPanel from './twitchpanel'
 import Footer from '../general/Footer'
 
 const savedState = JSON.parse(window.localStorage.getItem('ui')) || {}
@@ -48,6 +47,8 @@ export function Caster({ match }) {
         })
     }, [caster])
 
+    const aboveChat = true
+
     return (
         <div className="grid-container">
             <Controls />
@@ -64,11 +65,14 @@ export function Caster({ match }) {
                         mode={mode}
                     />
                 </div>
-                <div className="chat" open={chats.caster}>
-                    <TwitchChatEmbed channel={casterData.twitch_channel} />
-                </div>
+                <TwitchPanel
+                    channel={casterData.twitch_channel}
+                    open={chats.caster}
+                    videoConfig={casterData}
+                    withVideo={aboveChat}
+                    mode={mode}
+                />
             </div>
-            {casterData.twitch_channel && mode === 'viewer' && <TwitchEmbed config={casterData} />}
             <Footer />
         </div>
     )
