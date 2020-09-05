@@ -6,7 +6,7 @@ import api from '../../api/api'
 import { wsBase } from '../../configs/gen'
 import { SET_YOUTUBE } from '../../actions/players'
 
-export function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf, mode }) {
+export default function YoutubeEmbed({ caster, myCaster, youtubeLiveUrl, csrf, mode }) {
     const isCaster = mode === 'caster' && myCaster.url_path === caster
     const wsUrl = `${wsBase}/ws/${isCaster ? 'caster' : 'viewer'}/${caster}`
 

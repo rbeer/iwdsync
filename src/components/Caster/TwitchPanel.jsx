@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { TwitchChatEmbed } from './twitchchatembed'
-import { TwitchEmbed } from './twitchembed'
+import TwitchChatEmbed from './TwitchChatEmbed'
+import TwitchEmbed from './TwitchEmbed'
 
 const TwitchPanel = ({ channel, open, videoConfig, withVideo, mode }) => {
     console.log(withVideo, videoConfig, mode)

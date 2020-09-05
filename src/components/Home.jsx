@@ -1,8 +1,8 @@
 import React from 'react'
-import { CreateConfig } from '../createconfig/createconfig'
-import { UseConfig } from '../createconfig/useconfig'
+import CreateConfig from './CreateConfig'
+import UseConfig from './CreateConfig/UseConfig'
 
-export function Home(props) {
+export default function Home(props) {
     return (
         <>
             <div>

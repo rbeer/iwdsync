@@ -6,10 +6,10 @@ import * as uiStoreParams from '../../reducers/ui'
 import * as playersStoreParams from '../../reducers/players'
 
 import Controls from './Controls'
-import { TwitchChatEmbed } from './twitchchatembed'
-import { YoutubeEmbed } from './youtubeembed'
-import TwitchPanel from './twitchpanel'
-import Footer from '../general/Footer'
+import TwitchChatEmbed from './TwitchChatEmbed'
+import YoutubeEmbed from './YoutubeEmbed'
+import TwitchPanel from './TwitchPanel'
+import Footer from '../Footer'
 
 const savedState = JSON.parse(window.localStorage.getItem('ui')) || {}
 const combinedState = { ...uiStoreParams.initialState, ...savedState }
@@ -19,7 +19,7 @@ createStore('ui', combinedState, uiStoreParams.reducer).subscribe((state) => {
 
 createStore('players', playersStoreParams.initialState, playersStoreParams.reducer)
 
-export function Caster({ match }) {
+export default function Caster({ match }) {
     const [csrf, setCsrf] = useState('')
     const [casterData, setCasterData] = useState({})
     const [myCaster, setMyCaster] = useState({})

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export function CreateConfig(props) {
+export default function CreateConfig(props) {
     const [title, setTitle] = useState('')
     const [youtube_url, setYoutubeUrl] = useState('')
     const [twitch_channel, setTwitchChannel] = useState('')
@@ -15,23 +15,26 @@ export function CreateConfig(props) {
                 <h3>Create a Config</h3>
                 <div>title</div>
                 <input
-                    style={{...input_style}}
-                    type="text" value={title} onChange={event => setTitle(event.target.value)} />
+                    style={{ ...input_style }}
+                    type="text"
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                />
 
                 <div>youtube url</div>
                 <input
-                    style={{...input_style}}
+                    style={{ ...input_style }}
                     type="text"
                     value={youtube_url}
-                    onChange={event => setYoutubeUrl(event.target.value)}
+                    onChange={(event) => setYoutubeUrl(event.target.value)}
                 />
 
                 <div>twitch channel id (the part after twitch.tv/)</div>
                 <input
-                    style={{...input_style}}
+                    style={{ ...input_style }}
                     type="text"
                     value={twitch_channel}
-                    onChange={event => setTwitchChannel(event.target.value)}
+                    onChange={(event) => setTwitchChannel(event.target.value)}
                 />
 
                 <div style={{ marginTop: 20 }}>

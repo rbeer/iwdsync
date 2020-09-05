@@ -2,26 +2,14 @@ import React, { useRef } from 'react'
 import Moveable from 'react-moveable'
 import { useStore } from 'react-hookstore'
 
-import TwitchPlayer from './twitchPlayer'
+import TwitchPlayer from './TwitchPlayer'
 
 import { POSITION_TWITCH_EMBED } from '../../actions/ui'
-import useContentBounds from '../../helper/useContentBounds'
+import useContentBounds from '../../hooks/useContentBounds'
 
 const translateStyle = (translate) => `translate(${translate[0]}px, ${translate[1]}px)`
 
-export function getTwitchEmbedUrl(channel, chat = false) {
-    const parentString = process.env.REACT_APP_TWITCH_PARENTS.split(',')
-        .map((parent) => `&parent=${parent}`)
-        .join('')
-
-    if (chat) {
-        return `https://www.twitch.tv/embed/${channel}/chat?darkpopout${parentString}`
-    } else {
-        return `https://player.twitch.tv/?channel=${channel}${parentString}`
-    }
-}
-
-export function TwitchEmbed({ targetId, channel }) {
+export default function TwitchEmbed({ targetId, channel }) {
     const [ui, uiDispatch] = useStore('ui')
     const contentBounds = useContentBounds()
 
