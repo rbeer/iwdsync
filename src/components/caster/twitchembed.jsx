@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import Moveable from 'react-moveable'
 import { useStore } from 'react-hookstore'
 
+import TwitchPlayer from './twitchPlayer'
+
 import { POSITION_TWITCH_EMBED } from '../../actions/ui'
-import { SET_TWITCH } from '../../actions/players'
-import { twitchParents } from '../../configs/gen'
 import useContentBounds from '../../helper/useContentBounds'
 
 const translateStyle = (translate) => `translate(${translate[0]}px, ${translate[1]}px)`
@@ -21,50 +21,27 @@ export function getTwitchEmbedUrl(channel, chat = false) {
     }
 }
 
-export function TwitchEmbed(props) {
+export function TwitchEmbed({ targetId, channel }) {
     const [ui, uiDispatch] = useStore('ui')
-    const [{ twitch: player }, dispatchPlayers] = useStore('players')
     const contentBounds = useContentBounds()
 
     const moveableTarget = useRef()
     const eventSink = useRef()
 
-    const config = props.config
-    const defaultResolution = props.default_resolution || '360p'
-
-    useEffect(() => {
-        if (!player || config.twitch_channel !== player._options.channel) {
-            let options = {
-                channel: config.twitch_channel,
-                parent: twitchParents,
-                width: '100%',
-                height: '100%',
-            }
-            const new_player = new window.Twitch.Player('twitch-player-div', options)
-
-            dispatchPlayers({ type: SET_TWITCH, player: new_player })
-        }
-    }, [config.twitch_channel, dispatchPlayers, player])
-
-    useEffect(() => {
-        setTimeout(() => {
-            if (player) {
-                player.setQuality(defaultResolution)
-            }
-        }, 5000)
-    }, [player, defaultResolution])
-
     return (
         <div className="twitch-video">
-            <div
-                id="twitch-player-div"
+            <TwitchPlayer
                 style={{
                     height: ui.twitchEmbed.size.height,
                     width: ui.twitchEmbed.size.width,
                     transform: `translate(${ui.twitchEmbed.translate[0]}px, ${ui.twitchEmbed.translate[1]}px)`,
                 }}
                 ref={moveableTarget}
-            ></div>
+                targetId={targetId}
+                channel={channel}
+                width="100%"
+                height="100%"
+            ></TwitchPlayer>
             <Moveable
                 target={moveableTarget.current}
                 zoom={1}

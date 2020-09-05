@@ -8,7 +8,7 @@ const TwitchPanel = ({ channel, open, videoConfig, withVideo, mode }) => {
     return (
         <div className="twitch-panel" open={open} with-video={withVideo.toString()}>
             {videoConfig.twitch_channel && mode === 'viewer' && withVideo && (
-                <TwitchEmbed config={videoConfig} />
+                <TwitchEmbed targetId="twitch-player" channel={videoConfig.twitch_channel} />
             )}
             <div className="chat" open={open}>
                 <TwitchChatEmbed channel={channel} />

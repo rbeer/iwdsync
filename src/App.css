@@ -150,10 +150,11 @@ button:focus {
   flex: 0 1;
 }
 
-.content .twitch-panel[with-video="true"] #twitch-player-div {
+.content .twitch-panel[with-video="true"] #twitch-player{
     height: unset !important;
     width: unset !important;
     transform: none !important;
+    box-shadow: none !important;
 }
 
 .content .twitch-panel[with-video="true"] .chat {
@@ -190,7 +191,7 @@ button:focus {
   height: 100% !important;
 }
 
-#twitch-player-div {
+#twitch-player {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px
 }
 
