@@ -9,7 +9,7 @@ a {
 }
 
 body {
-  background: rgb(34 35 35);
+  background: rgb(34, 35, 35);
 }
 
 button:focus {
@@ -55,7 +55,7 @@ button:focus {
 
 .controls .chat-toggle:hover text tspan,
 .controls .chat-toggle[data-active="true"] text tspan {
-  fill: rgb(188 18 64);
+  fill: rgb(188, 18, 64);
 }
 
 .controls .chat-toggle.mirror-x path {
@@ -127,22 +127,18 @@ button:focus {
   grid-area: Content;
   display: flex;
   align-items: center;
-  background: rgb(35 35 35);
+  background: rgb(35, 35, 35);
   height: 100vh;
 }
 
 .content .twitch-panel {
   display: flex;
   flex-direction: column;
-  flex: 1 1 25vw;
+  flex: 1 1;
   height: 100%;
   position: relative;
-  max-width: 0vw;
+  max-width: 0;
   transition: max-width 0.3s ease-out;
-}
-
-.content .twitch-panel[open] {
-  max-width: 25vw;
 }
 
 .content .twitch-panel[with-video="true"] .twitch-video {
@@ -150,15 +146,13 @@ button:focus {
   flex: 0 1;
 }
 
-.content .twitch-panel[with-video="true"] #twitch-player{
-    height: unset !important;
-    width: unset !important;
-    transform: none !important;
+.content .twitch-panel[with-video="true"] .twitch-embed{
+    position: relative;
     box-shadow: none !important;
 }
 
 .content .twitch-panel[with-video="true"] .chat {
-  flex: 1 1 25vh;
+  flex: 1 1;
 }
 .content .chat {
   flex: 1 1 25vw;
@@ -169,7 +163,11 @@ button:focus {
 }
 
 .content .chat[open] {
-  max-width: 25vw;
+  max-width: 100%;
+}
+
+.content .twitch-panel .chat[open] {
+  max-width: unset;
 }
 
 .content .video {
@@ -182,17 +180,28 @@ button:focus {
   position: absolute;
 }
 
-.twitch-video .moveable-control-box{
-  height: 70%;
+.twitch-embed {
+}
+
+.twitch-embed .drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  height: 10%;
   width: 100%;
+  cursor: move;
 }
 
 .twitch-video .moveable-area {
   height: 100% !important;
 }
 
-#twitch-player {
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px
+.twitch-embed {
+  position: absolute;
+  z-index: 100;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 
 .footer {

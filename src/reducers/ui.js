@@ -6,9 +6,11 @@ export const initialState = {
         caster: true,
     },
     twitchEmbed: {
-        translate: [100, 100],
-        size: [360, 640],
+        translate: [0, 0],
+        size: [225, 400],
+        aboveChat: true,
     },
+    showDropzone: false,
 }
 
 export const reducer = (state, action) => {

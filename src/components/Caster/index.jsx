@@ -57,13 +57,13 @@ export default function Caster({ match }) {
                     <TwitchChatEmbed channel={chats.side} />
                 </div>
                 <div className="video">
-                    <YoutubeEmbed
+                    {/*<YoutubeEmbed
                         caster={caster}
                         youtubeLiveUrl={casterData.youtube_url}
                         myCaster={myCaster}
                         csrf={csrf}
                         mode={mode}
-                    />
+                      />*/}
                 </div>
                 <TwitchPanel
                     channel={casterData.twitch_channel}

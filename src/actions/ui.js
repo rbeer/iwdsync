@@ -1,9 +1,13 @@
 export const TOGGLE_CHAT = Symbol('TOGGLE_CHAT')
 export const POSITION_TWITCH_EMBED = Symbol('POSITION_TWITCH_EMBED')
+export const TOGGLE_ABOVE_CHAT = Symbol('TOGGLE_ABOVE_CHAT')
+export const TOGGLE_DROPZONE = Symbol('TOGGLE_DROPZONE')
 
 export const symbols = {
     TOGGLE_CHAT,
     POSITION_TWITCH_EMBED,
+    TOGGLE_ABOVE_CHAT,
+    TOGGLE_DROPZONE,
 }
 
 export const actions = {
@@ -28,6 +32,21 @@ export const actions = {
                 translate,
                 size,
             },
+        }
+    },
+    [TOGGLE_ABOVE_CHAT]: (state, { aboveChat }) => {
+        return {
+            ...state,
+            twitchEmbed: {
+                ...state.twitchEmbed,
+                aboveChat,
+            },
+        }
+    },
+    [TOGGLE_DROPZONE]: (state, { showDropzone }) => {
+        return {
+            ...state,
+            showDropzone,
         }
     },
 }
