@@ -29,8 +29,8 @@ export const actions = {
             ...state,
             twitchEmbed: {
                 ...state.twitchEmbed,
-                translate,
-                size,
+                translate: translate ? translate : state.twitchEmbed.translate,
+                size: size ? size : state.twitchEmbed.size,
             },
         }
     },
