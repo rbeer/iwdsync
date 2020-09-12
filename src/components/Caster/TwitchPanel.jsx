@@ -4,13 +4,14 @@ import { useStore } from 'react-hookstore'
 import TwitchChatEmbed from './TwitchChatEmbed'
 import TwitchEmbed from './TwitchEmbed'
 
-const TwitchPanel = ({ channel, open, videoConfig, withVideo, mode }) => {
-    console.log(withVideo, videoConfig, mode)
+const TwitchPanel = ({ channel, open, videoConfig, mode }) => {
     const [
         {
             twitchEmbed: {
-                size: [, width],
+                size: [height, width],
+                aboveChat,
             },
+            showDropzone,
         },
     ] = useStore('ui')
 
@@ -19,13 +20,16 @@ const TwitchPanel = ({ channel, open, videoConfig, withVideo, mode }) => {
             className="twitch-panel"
             style={{ maxWidth: width }}
             open={open}
-            with-video={withVideo.toString()}
+            with-video={aboveChat.toString()}
         >
             {videoConfig.twitch_channel && (
                 /*mode === 'viewer' &&*/ <TwitchEmbed
                     targetId="twitch-player"
                     channel={videoConfig.twitch_channel}
                 />
+            )}
+            {showDropzone && !aboveChat && (
+                <div className="dropzone" style={{ width, height }}></div>
             )}
             <div className="chat" open={open}>
                 <TwitchChatEmbed channel={channel} />

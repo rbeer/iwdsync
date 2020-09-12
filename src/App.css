@@ -147,8 +147,13 @@ button:focus {
 }
 
 .content .twitch-panel[with-video="true"] .twitch-embed{
-    position: relative;
-    box-shadow: none !important;
+  position: relative;
+  box-shadow: none !important;
+}
+
+.content .twitch-panel .dropzone {
+  border: 5px dashed rgb(200, 200, 200);
+  box-sizing: border-box;
 }
 
 .content .twitch-panel[with-video="true"] .chat {
@@ -180,9 +185,6 @@ button:focus {
   position: absolute;
 }
 
-.twitch-embed {
-}
-
 .twitch-embed .drag-handle {
   position: absolute;
   top: 0;
@@ -192,6 +194,11 @@ button:focus {
   height: 10%;
   width: 100%;
   cursor: move;
+  transition: background 0.2s ease-out;
+}
+
+.twitch-embed .drag-handle:hover {
+  background: rgba(200, 200, 200, 0.5);
 }
 
 .twitch-video .moveable-area {

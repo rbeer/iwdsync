@@ -47,8 +47,6 @@ export default function Caster({ match }) {
         })
     }, [caster])
 
-    const aboveChat = true
-
     return (
         <div className="grid-container">
             <Controls />
@@ -57,19 +55,18 @@ export default function Caster({ match }) {
                     <TwitchChatEmbed channel={chats.side} />
                 </div>
                 <div className="video">
-                    {/*<YoutubeEmbed
+                    <YoutubeEmbed
                         caster={caster}
                         youtubeLiveUrl={casterData.youtube_url}
                         myCaster={myCaster}
                         csrf={csrf}
                         mode={mode}
-                      />*/}
+                    />
                 </div>
                 <TwitchPanel
                     channel={casterData.twitch_channel}
                     open={chats.caster}
                     videoConfig={casterData}
-                    withVideo={aboveChat}
                     mode={mode}
                 />
             </div>
