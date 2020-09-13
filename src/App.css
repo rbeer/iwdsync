@@ -134,7 +134,7 @@ button:focus {
 .content .twitch-panel {
   display: flex;
   flex-direction: column;
-  flex: 1 1;
+  flex: 1 0 350px;
   height: 100%;
   position: relative;
   max-width: 0;
@@ -146,7 +146,7 @@ button:focus {
   flex: 0 1;
 }
 
-.content .twitch-panel[with-video="true"] .twitch-embed{
+.content .twitch-panel .twitch-embed[above-chat="true"]{
   position: relative;
   box-shadow: none !important;
 }
@@ -160,7 +160,7 @@ button:focus {
   flex: 1 1;
 }
 .content .chat {
-  flex: 1 1 25vw;
+  flex: 1 0 350px;
   height: 100%;
   position: relative;
   max-width: 0vw;
@@ -168,10 +168,10 @@ button:focus {
 }
 
 .content .chat[open] {
-  max-width: 100%;
+  max-width: 350px;
 }
 
-.content .twitch-panel .chat[open] {
+.content .twitch-panel[with-video="true"] .chat[open] {
   max-width: unset;
 }
 
@@ -191,7 +191,7 @@ button:focus {
   left: 0;
   margin: 0;
   padding: 0;
-  height: 10%;
+  height: 33%;
   width: 100%;
   cursor: move;
   transition: background 0.2s ease-out;

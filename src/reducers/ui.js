@@ -11,6 +11,7 @@ export const initialState = {
         aboveChat: true,
     },
     showDropzone: false,
+    panelWithVideo: true,
 }
 
 export const reducer = (state, action) => {

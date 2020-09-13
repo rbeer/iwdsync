@@ -2,7 +2,7 @@ import React from 'react'
 import SVG from 'react-inlinesvg'
 import { useStore } from 'react-hookstore'
 
-import { TOGGLE_CHAT } from '../../actions/ui'
+import { POSITION_TWITCH_EMBED, TOGGLE_ABOVE_CHAT, TOGGLE_CHAT } from '../../actions/ui'
 
 export const ChatToggle = ({ state = false, channelTag = '{?!}', mirrorX = false, toggle }) => (
     <SVG
@@ -19,16 +19,43 @@ export const ChatToggle = ({ state = false, channelTag = '{?!}', mirrorX = false
 const casterChannelTag = 'IWD'
 
 const Controls = () => {
-    const [{ chats }, dispatchUI] = useStore('ui')
+    const [
+        {
+            chats,
+            aboveChat,
+            panelWithVideo,
+            twitchEmbed: {
+                translate: [tX, tY],
+                size: [, width],
+            },
+        },
+        uiDispatch,
+    ] = useStore('ui')
 
     const toggleChat = ({ currentTarget }) => {
-        const { channelTag, active } = currentTarget.dataset
-        dispatchUI({
+        const { channelTag, active: activeString } = currentTarget.dataset
+        // current state; negate this to toggle
+        const active = activeString === 'true'
+        const isCaster = channelTag === casterChannelTag
+        uiDispatch({
             type: TOGGLE_CHAT,
             channelTag,
             casterChannelTag,
-            active: active === 'true',
+            active,
+            isCaster,
         })
+
+        if (isCaster && !aboveChat) {
+            let translateX = !active ? 350 : -350
+            if (panelWithVideo) {
+                translateX = !active ? width : -width
+                uiDispatch({ type: TOGGLE_ABOVE_CHAT, aboveChat: !active })
+            }
+            uiDispatch({ type: POSITION_TWITCH_EMBED, translate: [tX + translateX, tY] })
+        }
+        //if (aboveChat && !casterChatOpen) {
+        //uiDispatch({ type: POSITION_TWITCH_EMBED, translate: [-width, 0] })
+        //}
     }
 
     return (
