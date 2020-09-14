@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import Draggable from 'react-draggable'
+import { Resizable } from 'react-resizable'
 import { useStore } from 'react-hookstore'
+import SVG from 'react-inlinesvg'
 
 import TwitchPlayer from './TwitchPlayer'
 
@@ -10,14 +12,31 @@ import {
     TOGGLE_ABOVE_CHAT,
     TOGGLE_PANEL_WITH_VIDEO,
 } from '../../actions/ui'
-import useContentBounds from '../../hooks/useContentBounds'
-import { useCallback } from 'react'
+
+import 'react-resizable/css/styles.css'
+
+// TODO: needs to take right-shift of TwitchPanel
+//       into account
+//
+//import useContentBounds from '../../hooks/useContentBounds'
+//
+//const contentBounds = useContentBounds()
+//
+//const draggableBounds = useRef({
+//top: 0,
+//right: 0,
+//bottom: contentBounds.bottom - height - contentBounds.top,
+//left: -contentBounds.right + width,
+//})
 
 const hitsDropzone = ({ x, y }) => x >= -170 && y <= 70
 
+const ResizeHandle = (...resizeHandle) => (
+    <SVG src="/icons/angle-up.svg" className={`resize-handle resize-handle-${resizeHandle}`} />
+)
+
 export default function TwitchEmbed({ targetId, channel }) {
-    const [{ chats, twitchEmbed, showDropzone, panelWithVideo }, uiDispatch] = useStore('ui')
-    const contentBounds = useContentBounds()
+    const [{ chats, twitchEmbed, showDropzone }, uiDispatch] = useStore('ui')
     const nodeRef = useRef(null)
 
     const { caster: casterChatOpen } = chats
@@ -31,13 +50,6 @@ export default function TwitchEmbed({ targetId, channel }) {
 
     const x = withVideo ? 0 : tX
     const y = withVideo ? 0 : tY
-
-    const draggableBounds = useRef({
-        top: 0,
-        right: 0,
-        bottom: contentBounds.bottom - height - contentBounds.top,
-        left: -contentBounds.right + width,
-    })
 
     const onStop = useCallback(
         (_, { x, y }) => {
@@ -69,6 +81,12 @@ export default function TwitchEmbed({ targetId, channel }) {
         [uiDispatch, showDropzone, aboveChat],
     )
 
+    const onResize = (_, { size }) =>
+        uiDispatch({
+            type: POSITION_TWITCH_EMBED,
+            size: [size.height, size.width],
+        })
+
     return (
         <Draggable
             onStop={onStop}
@@ -78,10 +96,35 @@ export default function TwitchEmbed({ targetId, channel }) {
             nodeRef={nodeRef}
             //bounds={draggableBounds.current}
         >
-            <div ref={nodeRef} className="twitch-embed" above-chat={aboveChat.toString()}>
-                <TwitchPlayer targetId={targetId} channel={channel} width={width} height={height} />
-                <div className="drag-handle"></div>
-            </div>
+            <Resizable
+                height={height}
+                width={width}
+                lockAspectRatio={true}
+                handle={ResizeHandle}
+                resizeHandles={['n', 'ne', 'e', 's', 'sw', 'w']}
+                onResize={onResize}
+            >
+                <div
+                    ref={nodeRef}
+                    style={{ height, width }}
+                    className="twitch-embed"
+                    above-chat={aboveChat.toString()}
+                >
+                    {/* dev dummy for TwitchPlayer
+                    <div
+                        id={targetId}
+                        style={{ background: '#fff', minHeight: height, minWidth: width }}
+                    ></div>
+                    */}
+                    <TwitchPlayer
+                        targetId={targetId}
+                        channel={channel}
+                        width={width}
+                        height={height}
+                    />
+                    <div className="drag-handle"></div>
+                </div>
+            </Resizable>
         </Draggable>
     )
 }

@@ -10,6 +10,7 @@ a {
 
 body {
   background: rgb(34, 35, 35);
+  overflow-x: hidden;
 }
 
 button:focus {
@@ -25,14 +26,19 @@ button:focus {
     "Footer";
 }
 
-.moveable-event-sink {
+.resizable-event-sink {
   position: fixed;
-  visibility: hidden;
+  z-index: 500;
+  pointer-events: none;
   margin: 0;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+body.react-draggable-transparent-selection .resizable-event-sink {
+  pointer-events: all;
 }
 
 .moveable-control-box .moveable-line {
@@ -183,6 +189,61 @@ button:focus {
 
 .twitch-video {
   position: absolute;
+}
+
+.twitch-embed .resize-handle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  fill: rgb(255, 255, 255);
+  filter: drop-shadow(0px 1px 0 black);
+  opacity: 0;
+  transform: opacity 0.2s ease-out;
+}
+
+.twitch-embed:hover .resize-handle {
+  opacity: 1;
+}
+
+.twitch-embed .resize-handle-n {
+  top: 0;
+  left: 50%;
+  cursor: n-resize;
+}
+
+.twitch-embed .resize-handle-ne {
+  transform: rotate(45deg);
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+}
+
+.twitch-embed .resize-handle-e {
+  transform: rotate(90deg);
+  top: 50%;
+  right: 0;
+  cursor: e-resize;
+}
+
+.twitch-embed .resize-handle-s {
+  transform: rotate(180deg);
+  bottom: 0;
+  left: 50%;
+  cursor: s-resize;
+}
+
+.twitch-embed .resize-handle-sw {
+  transform: rotate(225deg);
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+}
+
+.twitch-embed .resize-handle-w {
+  transform: rotate(270deg);
+  top: 50%;
+  left: 0;
+  cursor: w-resize;
 }
 
 .twitch-embed .drag-handle {
